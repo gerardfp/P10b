@@ -21,7 +21,7 @@ public class ApiViewModel extends AndroidViewModel {
     public LiveData<ApiResponse> getItems(String term){
         final MutableLiveData<ApiResponse> itunesResponse = new MutableLiveData<>();
 
-        ApiModule.api.buscar(term).enqueue(new Callback<ApiResponse>() {
+        ApiModule.api.buscar().enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 itunesResponse.setValue(response.body());
