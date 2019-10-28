@@ -20,7 +20,7 @@ public class DatabaseViewModel extends AndroidViewModel {
         itemDao = ItemDatabase.getInstance(application).itemDao();
     }
 
-    public LiveData<List<Item>> getItems(){
-        return itemDao.getItems();
+    public LiveData<List<Item>> getItems(String term){
+        return itemDao.getItems("%"+term+"%");
     }
 }

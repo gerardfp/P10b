@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.company.p9.R;
 import com.company.p9.model.ApiResponse;
 import com.company.p9.model.Item;
 import com.company.p9.viewmodel.ApiViewModel;
+import com.company.p9.viewmodel.SearchViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,26 +29,40 @@ import java.util.List;
 public class ApiAbcFragment extends Fragment {
 
     ApiViewModel apiViewModel;
+    SearchViewModel searchViewModel;
     ItemAdapter itemAdapter;
 
     public ApiAbcFragment() {}
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragment = inflater.inflate(R.layout.fragment_api_abc, container, false);
 
         apiViewModel = ViewModelProviders.of(this).get(ApiViewModel.class);
+        searchViewModel = ViewModelProviders.of(getActivity()).get(SearchViewModel.class);
 
         RecyclerView recyclerView = fragment.findViewById(R.id.items);
         itemAdapter = new ItemAdapter(getContext());
         recyclerView.setAdapter(itemAdapter);
 
-        apiViewModel.getItems("").observe(this, new Observer<ApiResponse>() {
+        apiViewModel.getItems("").observe(ApiAbcFragment.this, new Observer<List<Item>>() {
             @Override
-            public void onChanged(ApiResponse apiResponse) {
-                itemAdapter.setList(apiResponse.items);
+            public void onChanged(List<Item> items) {
+                itemAdapter.setList(items);
+            }
+        });
+
+        searchViewModel.term.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                apiViewModel.getItems(s).observe(ApiAbcFragment.this, new Observer<List<Item>>() {
+                    @Override
+                    public void onChanged(List<Item> items) {
+                        itemAdapter.setList(items);
+                    }
+                });
+
             }
         });
 
@@ -64,7 +80,7 @@ public class ApiAbcFragment extends Fragment {
         @NonNull
         @Override
         public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.viewholder_item, parent));
+            return new ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.viewholder_item, parent, false));
         }
 
         @Override

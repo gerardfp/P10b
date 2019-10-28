@@ -6,15 +6,16 @@
     app:startDestination="@+id/nav_database">
 
     <fragment
-        android:id="@+id/nav_database"
-        android:name="com.company.p9.view.DatabaseFragment"
-        android:label="Database"
-        tools:layout="@layout/fragment_database" />
-
-    <fragment
         android:id="@+id/nav_api"
         android:name="com.company.p9.view.ApiFragment"
-        android:label="Api"
-        tools:layout="@layout/fragment_api" />
+        android:label="FROM API"
+        tools:layout="@layout/fragment_api" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_database"
+        android:name="com.company.p9.view.DatabaseFragment"
+        android:label="FROM DATABASE"
+        tools:layout="@layout/fragment_database" >
+    </fragment>
 
 </navigation>

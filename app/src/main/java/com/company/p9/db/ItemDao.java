@@ -14,6 +14,6 @@ public abstract class ItemDao {
     @Insert
     public abstract void insertItem(Item item);
 
-    @Query("SELECT * FROM Item")
-    public abstract LiveData<List<Item>> getItems();
+    @Query("SELECT * FROM Item WHERE name LIKE :term")
+    public abstract LiveData<List<Item>> getItems(String term);
 }

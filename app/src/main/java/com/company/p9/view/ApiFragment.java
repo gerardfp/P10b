@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +28,10 @@ public class ApiFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView =  inflater.inflate(R.layout.fragment_api, container, false);
 
-        ApiSectionsPagerAdapter apiSectionsPagerAdapter = new ApiSectionsPagerAdapter(getActivity(), getActivity().getSupportFragmentManager());
-        ViewPager viewPager = fragmentView.findViewById(R.id.view_pager);
+        ApiSectionsPagerAdapter apiSectionsPagerAdapter = new ApiSectionsPagerAdapter(getActivity(), getChildFragmentManager());
+        ViewPager viewPager = fragmentView.findViewById(R.id.api_view_pager);
         viewPager.setAdapter(apiSectionsPagerAdapter);
-        TabLayout tabs = fragmentView.findViewById(R.id.tabs);
+        TabLayout tabs = fragmentView.findViewById(R.id.api_tabs);
         tabs.setupWithViewPager(viewPager);
 
         return fragmentView;
