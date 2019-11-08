@@ -36,9 +36,6 @@ public class MainViewModel extends AndroidViewModel {
     private String searchTerm = "";
     private Sort sort = Sort.DATE;
 
-    private MutableLiveData<String> termLiveData = new MutableLiveData<>();
-    private MutableLiveData<Sort> sortLiveData = new MutableLiveData<>();
-
     public LiveData<List<Item>> apiItemList = Transformations.switchMap(requery, new Function<Boolean, LiveData<List<Item>>>() {
         @Override
         public LiveData<List<Item>> apply(final Boolean input) {
@@ -86,14 +83,10 @@ public class MainViewModel extends AndroidViewModel {
     public void setSearchTerm(String newTerm){
         searchTerm = newTerm;
         requery.setValue(true);
-//        termLiveData.setValue(newTerm);
     }
 
     public void setSort(Sort newSort) {
-        Log.e("ABCD", "SET SORT to " + newSort);
         sort = newSort;
         requery.setValue(true);
-
-//        sortLiveData.setValue(sort);
     }
 }
