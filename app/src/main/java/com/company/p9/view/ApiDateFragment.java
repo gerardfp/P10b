@@ -55,7 +55,7 @@ public class ApiDateFragment extends Fragment {
         List<Item> items = new ArrayList<>();
         Context mContext;
 
-        public ItemAdapter(Context context){
+        ItemAdapter(Context context){
             mContext = context;
         }
 

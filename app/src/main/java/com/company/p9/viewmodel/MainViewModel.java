@@ -10,9 +10,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import com.company.p9.api.Api;
 import com.company.p9.api.ApiModule;
-import com.company.p9.db.ItemDao;
-import com.company.p9.db.ItemDatabase;
+import com.company.p9.db.AppDatabase;
+import com.company.p9.db.AppDao;
 import com.company.p9.model.ApiResponse;
 import com.company.p9.model.Item;
 
@@ -25,21 +26,30 @@ import retrofit2.Response;
 
 public class MainViewModel extends AndroidViewModel {
 
-    private ItemDao itemDao;
+    public enum Sort { DATE, ABC }
 
-    public MutableLiveData<String> termLiveData = new MutableLiveData<>();
+    private AppDao dao;
+    private Api api;
 
-    public LiveData<List<Item>> apiItemList = Transformations.switchMap(termLiveData, new Function<String, LiveData<List<Item>>>() {
+    private MutableLiveData<Boolean> requery = new MutableLiveData<>();
+
+    private String searchTerm = "";
+    private Sort sort = Sort.DATE;
+
+    private MutableLiveData<String> termLiveData = new MutableLiveData<>();
+    private MutableLiveData<Sort> sortLiveData = new MutableLiveData<>();
+
+    public LiveData<List<Item>> apiItemList = Transformations.switchMap(requery, new Function<Boolean, LiveData<List<Item>>>() {
         @Override
-        public LiveData<List<Item>> apply(final String input) {
+        public LiveData<List<Item>> apply(final Boolean input) {
             final MutableLiveData<List<Item>> items = new MutableLiveData<>();
 
-            ApiModule.api.buscar().enqueue(new Callback<ApiResponse>() {
+            api.buscar().enqueue(new Callback<ApiResponse>() {
                 @Override
                 public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                     List<Item> itemList = new ArrayList<>();
                     for(Item item:response.body().items){
-                        if(item.name.contains(input)){
+                        if(item.name.contains(searchTerm)){
                             itemList.add(item);
                         }
                     }
@@ -56,22 +66,34 @@ public class MainViewModel extends AndroidViewModel {
         }
     });
 
-    public LiveData<List<Item>> dbItemList = Transformations.switchMap(termLiveData, new Function<String, LiveData<List<Item>>>() {
+    public LiveData<List<Item>> dbItemList = Transformations.switchMap(requery, new Function<Boolean, LiveData<List<Item>>>() {
         @Override
-        public LiveData<List<Item>> apply(String input) {
-            return itemDao.getItems("%" + input + "%");
+        public LiveData<List<Item>> apply(Boolean input) {
+            if(sort == Sort.DATE) {
+                return dao.getItemsByDate("%" + searchTerm + "%");
+            }
+            return dao.getItemsByName("%" + searchTerm + "%");
         }
     });
 
     public MainViewModel(@NonNull Application application) {
         super(application);
 
-        itemDao = ItemDatabase.getInstance(application).itemDao();
-
-        termLiveData.setValue("");
+        dao = AppDatabase.getInstance(application).itemDao();
+        api = ApiModule.api;
     }
 
     public void setSearchTerm(String newTerm){
-        termLiveData.setValue(newTerm);
+        searchTerm = newTerm;
+        requery.setValue(true);
+//        termLiveData.setValue(newTerm);
+    }
+
+    public void setSort(Sort newSort) {
+        Log.e("ABCD", "SET SORT to " + newSort);
+        sort = newSort;
+        requery.setValue(true);
+
+//        sortLiveData.setValue(sort);
     }
 }

@@ -3,38 +3,70 @@ package com.company.p9.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.company.p9.R;
+import com.company.p9.viewmodel.MainViewModel;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 
 public class DatabaseFragment extends Fragment {
 
 
+    private MainViewModel mainViewModel;
+
     public DatabaseFragment() {}
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View fragment =  inflater.inflate(R.layout.fragment_database, container, false);
+        return inflater.inflate(R.layout.fragment_database, container, false);
+    }
 
-        DatabaseSectionsPagerAdapter databaseSectionsPagerAdapter = new DatabaseSectionsPagerAdapter(getActivity(), getChildFragmentManager());
-        ViewPager viewPager = fragment.findViewById(R.id.db_view_pager);
-        viewPager.setAdapter(databaseSectionsPagerAdapter);
-        TabLayout tabs = fragment.findViewById(R.id.db_tabs);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mainViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
+
+        mainViewModel.setSort(MainViewModel.Sort.ABC);
+
+        ViewPager viewPager = view.findViewById(R.id.db_view_pager);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(position == 0){ mainViewModel.setSort(MainViewModel.Sort.ABC); }
+                else { mainViewModel.setSort(MainViewModel.Sort.DATE); }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        TabLayout tabs = view.findViewById(R.id.db_tabs);
         tabs.setupWithViewPager(viewPager);
 
-        return fragment;
+        DatabaseSectionsPagerAdapter databaseSectionsPagerAdapter = new DatabaseSectionsPagerAdapter(getActivity(), getChildFragmentManager());
+        viewPager.setAdapter(databaseSectionsPagerAdapter);
     }
 
     static class DatabaseSectionsPagerAdapter extends FragmentPagerAdapter {
