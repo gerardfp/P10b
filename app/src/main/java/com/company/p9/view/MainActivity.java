@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 
 import com.company.p9.R;
-import com.company.p9.viewmodel.SearchViewModel;
+import com.company.p9.viewmodel.MainViewModel;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        final SearchViewModel searchViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
+        final MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         SearchView searchView = findViewById(R.id.search_view);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                searchViewModel.setTerm(newText);
+                mainViewModel.setSearchTerm(newText);
                 return false;
             }
         });

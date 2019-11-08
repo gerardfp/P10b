@@ -9,15 +9,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.company.p9.R;
-import com.company.p9.model.ApiResponse;
 import com.company.p9.model.Item;
-import com.company.p9.viewmodel.ApiViewModel;
-import com.company.p9.viewmodel.SearchViewModel;
+import com.company.p9.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -25,44 +24,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ApiDateFragment extends Fragment {
 
-    SearchViewModel searchViewModel;
-    ApiViewModel apiViewModel;
-    ItemAdapter itemAdapter;
+    private MainViewModel mainViewModel;
+    private ItemAdapter itemAdapter;
 
     public ApiDateFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_api_date, container, false);
+    }
 
-        View fragment = inflater.inflate(R.layout.fragment_api_date, container, false);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        searchViewModel = ViewModelProviders.of(getActivity()).get(SearchViewModel.class);
-        apiViewModel = ViewModelProviders.of(this).get(ApiViewModel.class);
+        mainViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
 
-        RecyclerView recyclerView = fragment.findViewById(R.id.items);
-        itemAdapter = new ItemAdapter(getContext());
-        recyclerView.setAdapter(itemAdapter);
+        RecyclerView recyclerView = view.findViewById(R.id.items);
+        recyclerView.setAdapter(itemAdapter = new ItemAdapter(getContext()));
 
-        apiViewModel.getItems("").observe(ApiDateFragment.this, new Observer<List<Item>>() {
+        mainViewModel.apiItemList.observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
             public void onChanged(List<Item> items) {
                 itemAdapter.setList(items);
             }
         });
-
-        searchViewModel.term.observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                apiViewModel.getItems(s).observe(ApiDateFragment.this, new Observer<List<Item>>() {
-                    @Override
-                    public void onChanged(List<Item> items) {
-                        itemAdapter.setList(items);
-                    }
-                });
-
-            }
-        });
-        return fragment;
     }
 
     class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder>{

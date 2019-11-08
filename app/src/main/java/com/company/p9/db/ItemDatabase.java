@@ -37,7 +37,7 @@ public abstract class ItemDatabase extends RoomDatabase {
             @Override
             public void run() {
                 for (int i = 0; i < 200; i++) {
-                    tareasDao.insertItem(new Item("Item"+i, i+"/"+i+"/"+i));
+                    tareasDao.insertItem(new Item("Item"+i, (int) (Math.random()*31)+"/"+(int) (Math.random()*12)+"/"+(int) (Math.random()*25+2000)));
                 }
             }
         });

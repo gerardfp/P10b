@@ -3,7 +3,6 @@ package com.company.p9.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,13 @@ import android.widget.TextView;
 
 import com.company.p9.R;
 import com.company.p9.model.Item;
-import com.company.p9.viewmodel.DatabaseViewModel;
-import com.company.p9.viewmodel.SearchViewModel;
+import com.company.p9.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -26,43 +25,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class DatabaseAbcFragment extends Fragment {
 
-    SearchViewModel searchViewModel;
-    DatabaseViewModel databaseViewModel;
-    ItemAdapter itemAdapter;
+    private MainViewModel mainViewModel;
+    private ItemAdapter itemAdapter;
 
     public DatabaseAbcFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View fragment = inflater.inflate(R.layout.fragment_database_abc, container, false);
+        return inflater.inflate(R.layout.fragment_database_abc, container, false);
+    }
 
-        searchViewModel = ViewModelProviders.of(getActivity()).get(SearchViewModel.class);
-        databaseViewModel = ViewModelProviders.of(this).get(DatabaseViewModel.class);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView recyclerView = fragment.findViewById(R.id.items);
-        itemAdapter = new ItemAdapter(getContext());
-        recyclerView.setAdapter(itemAdapter);
+        mainViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
 
-        databaseViewModel.getItems("").observe(DatabaseAbcFragment.this, new Observer<List<Item>>() {
+        RecyclerView recyclerView = view.findViewById(R.id.items);
+        recyclerView.setAdapter(itemAdapter = new ItemAdapter(getContext()));
+
+        mainViewModel.dbItemList.observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
             public void onChanged(List<Item> items) {
                 itemAdapter.setList(items);
             }
         });
-
-        searchViewModel.term.observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                databaseViewModel.getItems(s).observe(DatabaseAbcFragment.this, new Observer<List<Item>>() {
-                    @Override
-                    public void onChanged(List<Item> items) {
-                        itemAdapter.setList(items);
-                    }
-                });
-            }
-        });
-
-        return fragment;
     }
 
     class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder>{
