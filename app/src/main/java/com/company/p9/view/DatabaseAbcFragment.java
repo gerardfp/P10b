@@ -42,7 +42,7 @@ public class DatabaseAbcFragment extends Fragment {
         mainViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
 
         RecyclerView recyclerView = view.findViewById(R.id.items);
-        recyclerView.setAdapter(itemAdapter = new ItemAdapter(getContext()));
+        recyclerView.setAdapter(itemAdapter = new ItemAdapter());
 
         mainViewModel.dbItemList.observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
@@ -54,16 +54,11 @@ public class DatabaseAbcFragment extends Fragment {
 
     class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder>{
         List<Item> items = new ArrayList<>();
-        Context mContext;
-
-        public ItemAdapter(Context context){
-            mContext = context;
-        }
 
         @NonNull
         @Override
         public ItemAdapter.ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ItemAdapter.ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.viewholder_item, parent, false));
+            return new ItemAdapter.ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_item, parent, false));
         }
 
         @Override

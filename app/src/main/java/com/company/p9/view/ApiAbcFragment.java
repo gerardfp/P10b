@@ -23,14 +23,12 @@ import com.company.p9.viewmodel.MainViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ApiAbcFragment extends Fragment {
 
     private MainViewModel mainViewModel;
     private ItemAdapter itemAdapter;
 
     public ApiAbcFragment() {}
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class ApiAbcFragment extends Fragment {
         mainViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel.class);
 
         RecyclerView recyclerView = view.findViewById(R.id.items);
-        recyclerView.setAdapter(itemAdapter = new ItemAdapter(getContext()));
+        recyclerView.setAdapter(itemAdapter = new ItemAdapter());
 
         mainViewModel.apiItemList.observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
@@ -56,16 +54,11 @@ public class ApiAbcFragment extends Fragment {
 
     class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder>{
         List<Item> items = new ArrayList<>();
-        Context mContext;
-
-        public ItemAdapter(Context context){
-            mContext = context;
-        }
 
         @NonNull
         @Override
         public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.viewholder_item, parent, false));
+            return new ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_item, parent, false));
         }
 
         @Override
