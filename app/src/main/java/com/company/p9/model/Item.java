@@ -9,7 +9,7 @@ public class Item {
     public int id;
 
     public String name;
-    public String date;
+    public String date; // TODO: TypeConverter
 
     public Item(){}
 

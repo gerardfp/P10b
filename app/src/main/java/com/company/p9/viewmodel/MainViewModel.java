@@ -16,8 +16,11 @@ import com.company.p9.db.AppDatabase;
 import com.company.p9.db.AppDao;
 import com.company.p9.model.ApiResponse;
 import com.company.p9.model.Item;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -49,6 +52,22 @@ public class MainViewModel extends AndroidViewModel {
                         if(item.name.contains(searchTerm)){
                             itemList.add(item);
                         }
+                    }
+
+                    if(sort == Sort.DATE){
+                        Collections.sort(itemList, new Comparator<Item>() {
+                            @Override
+                            public int compare(Item item, Item t1) {
+                                return item.date.compareTo(t1.date);
+                            }
+                        });
+                    } else {
+                        Collections.sort(itemList, new Comparator<Item>() {
+                            @Override
+                            public int compare(Item item, Item t1) {
+                                return item.name.compareTo(t1.name);
+                            }
+                        });
                     }
                     items.setValue(itemList);
                 }
